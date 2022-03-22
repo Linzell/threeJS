@@ -15,6 +15,25 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+/* 
+* Textures 
+*/
+const textureLoader = new THREE.TextureLoader()
+const particleTexture = textureLoader.load('textures/particles/1.png')
+const particleTexture2 = textureLoader.load('textures/particles/2.png')
+const particleTexture3 = textureLoader.load('textures/particles/3.png')
+const particleTexture4 = textureLoader.load('textures/particles/4.png')
+const particleTexture5 = textureLoader.load('textures/particles/5.png')
+const particleTexture6 = textureLoader.load('textures/particles/6.png')
+const particleTexture7 = textureLoader.load('textures/particles/7.png')
+const particleTexture8 = textureLoader.load('textures/particles/8.png')
+const particleTexture9 = textureLoader.load('textures/particles/9.png')
+const particleTexture10 = textureLoader.load('textures/particles/10.png')
+const particleTexture11 = textureLoader.load('textures/particles/11.png')
+const particleTexture12 = textureLoader.load('textures/particles/12.png')
+const particleTexture13 = textureLoader.load('textures/particles/13.png')
+
+
 // Galaxy
 const parameters = {}
 parameters.count = 10000
@@ -90,6 +109,14 @@ const generateGalaxy = () => {
     blending: THREE.AdditiveBlending,
     vertexColors: true
   })
+  material.size = 0.1
+  material.transparent = true
+  material.alphaMap = particleTexture
+  material.depthWrite = false
+  material.blending = THREE.AdditiveBlending
+  material.vertexColors = true
+  gui.add(material, 'alphaMap', [particleTexture, particleTexture2, particleTexture3, particleTexture4, particleTexture5, particleTexture6, particleTexture7, particleTexture8, particleTexture9, particleTexture10, particleTexture11, particleTexture12, particleTexture13]).name('Texture')
+
 
   // Mesh
   points = new THREE.Points(geometry, material)
