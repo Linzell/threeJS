@@ -51,6 +51,7 @@ parameters.speed = 0.08
 let geometry = null
 let material = null
 let points = null
+let pointsCenter = null
 
 const generateGalaxy = () => {
 
@@ -111,14 +112,12 @@ const generateGalaxy = () => {
   })
   material.size = 0.1
   material.transparent = true
-  material.alphaMap = particleTexture
+  material.alphaMap = particleTexture4
   material.depthWrite = false
   material.blending = THREE.AdditiveBlending
   material.vertexColors = true
-  gui.add(material, 'alphaMap', [particleTexture, particleTexture2, particleTexture3, particleTexture4, particleTexture5, particleTexture6, particleTexture7, particleTexture8, particleTexture9, particleTexture10, particleTexture11, particleTexture12, particleTexture13]).name('Texture')
 
-
-  // Mesh
+  // Mesh center
   points = new THREE.Points(geometry, material)
   scene.add(points)
 
@@ -136,6 +135,22 @@ gui.add(parameters, 'randomnessPower').min(1).max(10).step(0.001).name('Attracti
 gui.add(parameters, 'speed').min(0.001).max(0.5).step(0.001).name('Vitesse de rotation de la galaxie').onFinishChange(generateGalaxy)
 gui.addColor(parameters, 'insideColor').name('Couleur des étoiles').onFinishChange(generateGalaxy)
 gui.addColor(parameters, 'outsideColor').name('Couleur de la galaxie').onFinishChange(generateGalaxy)
+gui.add(material, 'alphaMap',
+  {
+    "Texture 1": particleTexture,
+    "Texture 2": particleTexture2,
+    "Texture 3": particleTexture3,
+    "Texture 4": particleTexture4,
+    "Texture 5": particleTexture5,
+    "Texture 6": particleTexture6,
+    "Texture 7": particleTexture7,
+    "Texture 8": particleTexture8,
+    "Texture 9": particleTexture9,
+    "Texture 10": particleTexture10,
+    "Texture 11": particleTexture11,
+    "Texture 12": particleTexture12,
+    "Texture 13": particleTexture13
+  }).name('Texture')
 
 /**
  * Sizes
@@ -183,9 +198,11 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
- * Animate
+ * Animate 
  */
 const clock = new THREE.Clock()
+
+console.log(points)
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime()
