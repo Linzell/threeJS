@@ -70,7 +70,7 @@ const load = {
     '/textures/environmentMaps/3/nz.jpg',]
 }
 
-let environmentMap = cubeTextureLoader.load(load.Ville)
+let environmentMap = cubeTextureLoader.load(load.Campagne)
 
 gui.add(environmentMap, 'texture', load).onChange((value) => {
   environmentMap = cubeTextureLoader.load(value)
@@ -93,19 +93,55 @@ updateBackground()
 
 const modele = {
   FlightHelmet: './models/FlightHelmet/glTF/FlightHelmet.gltf',
-  hamburger: '/models/hamburger.glb'
+  fox: '/models/Fox/glTF/Fox.gltf',
 }
+
+let mixer = null
 
 const chargeModel = (value) => {
   gltfLoader.load(
     value,
     (gltf) => {
+
+      if (modele.fox === value) {
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        const action = mixer.clipAction(gltf.animations[0])
+        const walking = mixer.clipAction(gltf.animations[1])
+        const running = mixer.clipAction(gltf.animations[2])
+
+        walking["Renard - Animation"] = 'Marche'
+        walking.play()
+        gui.add(action, 'Renard - Animation', ['Regarder', 'Marche', 'Course', 'Stop']).onChange((value) => {
+          if (value === 'Marche') {
+            walking.play()
+            running.stop()
+            action.stop()
+          } else if (value === 'Regarder') {
+            action.play()
+            walking.stop()
+            running.stop()
+          } else if (value === 'Course') {
+            running.play()
+            walking.stop()
+            action.stop()
+          } else {
+            action.stop()
+            walking.stop()
+            running.stop()
+          }
+        })
+      } else {
+        mixer = null
+      }
       const helmet = gltf.scene
       if (modele.FlightHelmet === value) {
         helmet.scale.set(10, 10, 10)
         helmet.position.set(0, -4, 0)
       } else if (modele.hamburger === value) {
         helmet.scale.set(0.3, 0.3, 0.3)
+        helmet.position.set(0, -1, 0)
+      } else if (modele.fox === value) {
+        helmet.scale.set(0.03, 0.03, 0.03)
         helmet.position.set(0, -1, 0)
       }
       helmet.rotation.y = Math.PI * 0.5
@@ -122,7 +158,7 @@ const deleteModel = () => {
     scene.remove(selectedObjects[i])
   }
 }
-chargeModel(modele.FlightHelmet)
+chargeModel(modele.fox)
 gui.add(gltfLoader, 'texture', modele).onChange((value) => {
   deleteModel()
   chargeModel(value)
@@ -224,7 +260,22 @@ gui.add(renderer, 'toneMappingExposure').min(0).max(10).step(0.001).name('Intens
 /**
  * Animate
  */
+ const clock = new THREE.Clock()
+ let previousTime = 0
+
+/**
+ * Animate
+ */
 const tick = () => {
+  const elapsedTime = clock.getElapsedTime()
+  const deltaTime = elapsedTime - previousTime
+  previousTime = elapsedTime
+
+  // Update mixer
+  if (mixer) {
+    mixer.update(deltaTime)
+  }
+
   // Update controls
   controls.update()
 
